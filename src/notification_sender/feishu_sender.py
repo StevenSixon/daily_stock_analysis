@@ -91,7 +91,10 @@ class FeishuSender:
         self._feishu_receive_id_type = (
             getattr(config, "feishu_receive_id_type", None) or "chat_id"
         ).strip().lower()
-        if self._feishu_receive_id_type not in ("chat_id", "open_id"):
+        # 飞书 im/v1/messages 支持的 receive_id_type 全集（含按邮箱/用户ID私聊）
+        if self._feishu_receive_id_type not in (
+            "chat_id", "open_id", "union_id", "user_id", "email",
+        ):
             logger.warning(
                 "无效的 FEISHU_RECEIVE_ID_TYPE=%s，回退为 chat_id",
                 self._feishu_receive_id_type,
