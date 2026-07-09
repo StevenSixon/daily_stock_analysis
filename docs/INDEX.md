@@ -55,6 +55,7 @@
 | [部署指南](DEPLOY.md) | 服务器部署、Docker、systemd、Supervisor 等部署方式 |
 | [云端 WebUI 部署](deploy-webui-cloud.md) | 云服务器访问 WebUI 的部署说明 |
 | [Zeabur 部署](docker/zeabur-deployment.md) | Zeabur 平台部署说明 |
+| [本地定时运行（macOS launchd）](local-scheduled-analysis.md) | 在本机用 launchd 定时触发每日分析的配方与 macOS 权限坑 |
 | [桌面端打包说明](desktop-package.md) | Electron 桌面端和 Web 构建产物打包说明 |
 
 ## 参考与开发

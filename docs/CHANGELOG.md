@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - [修复] 修复日股/韩股历史列表重建市场阶段摘要时将 non_trading 等结果阶段误传为 analysis_phase 导致列表查询失败的问题。
 - [改进] Web 历史报告详情不再内嵌展示 AI 建议卡片，结构化决策信号集中在 AI 建议页查询，并保留按来源报告 ID 筛选或 URL 参数精确定位入口。
 - [修复] 飞书 App Bot 支持 union_id/user_id/email 收件人类型（此前仅 chat_id/open_id，配置其它类型会被静默回退为 chat_id 导致 invalid receive_id 发送失败）。
+- [文档] 新增《本地定时运行（macOS launchd）》配方文档，含启动器/LaunchAgent 示例与 TCC/Keychain 权限坑，并登记到 docs/INDEX.md。
 
 ## [3.23.0] - 2026-06-20
 
