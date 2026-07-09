@@ -144,14 +144,39 @@ macOS 的 launchd 后台上下文与登录会话不同，两点常见坑：
   给 venv 的**真实 python 二进制**（`readlink -f <项目>/.venv/bin/python`）打勾。
 
 - **Keychain（若 LLM 后端依赖 Keychain 凭证）**：某些本地网关（如复用本机已登录 CLI 的封装）
-  在 launchd 后台上下文取不到 Keychain 凭证，会鉴权失败（如 `403`）。
-  这类后端应放在**登录会话**里启动（例如 `~/.zshrc`/登录项），不要用 LaunchAgent 托管；
+  在 launchd 后台上下文取不到 Keychain 凭证，会鉴权失败（如 `403`）。这类后端应放在
+  **GUI 登录会话（Aqua）** 里启动——launchd LaunchAgent 属于后台域，即使 RunAtLoad 也拿不到 Keychain。
+  可靠的登录会话启动方式：
+  - `~/.zshrc` 里守卫式自启（开终端即拉起，最简单）；
+  - 或做成 **隐藏登录项**（`osacompile` 打个 `do shell script` 的 .app，用 System Events 注册为 login item）——
+    登录即在会话内启动、无需开终端，比 .zshrc 更省心。
+  - **不要** 用 LaunchAgent 托管这类后端。
   分析任务本身仍可用 launchd（它只通过 HTTP 调后端，不碰 Keychain）。
-  代价：开机后需进入过登录会话（例如开一次终端）后端才在线，否则该次任务会因后端不可用而跳过。
+  > 冷启动竞态：后端刚起数秒内首个鉴权请求可能瞬时 `403`，热身后恢复；把后端安排在触发时间前启动即可规避。
+  > 残留代价：若开机后一直没进过登录会话，后端不在线，该次任务会跳过——用下面的“失败告警”兜底。
 
 ---
 
-## 7. 排障
+## 7. 可选增强：失败 / 完成通知
+
+定时任务最容易被忽略的是**静默跳过**（后端没起、非交易日）。给启动器加一条 macOS 通知即可兜底，不依赖后端：
+
+```python
+import subprocess
+def notify_mac(title, message):
+    try:
+        subprocess.run(["osascript", "-e",
+            f'display notification "{message}" with title "{title}"'], timeout=10, check=False)
+    except Exception:
+        pass
+```
+
+- 后端不可用时 `notify_mac("今日跳过", "后端未启动，未推送")`；
+- 跑完读一行 `成功: X, 失败: Y` 汇总，`notify_mac("已完成", summary)`，异常退出更醒目。
+
+---
+
+## 8. 排障
 
 | 现象 | 排查 |
 |---|---|
