@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, BarChart3, Bell, BriefcaseBusiness, Gauge, Home, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
+import { Activity, BarChart3, Bell, BriefcaseBusiness, FlaskConical, Gauge, Home, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { ALPHASIFT_CONFIG_CHANGED_EVENT, SYSTEM_CONFIG_CHANGED_EVENT, alphasiftApi } from '../../api/alphasift';
+import { researchApi } from '../../api/research';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAgentChatStore } from '../../stores/agentChatStore';
 import { useUiLanguage } from '../../contexts/UiLanguageContext';
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'decision-signals', labelKey: 'layout.nav.decisionSignals', to: '/decision-signals', icon: Activity },
   { key: 'backtest', labelKey: 'layout.nav.backtest', to: '/backtest', icon: BarChart3 },
   { key: 'alerts', labelKey: 'layout.nav.alerts', to: '/alerts', icon: Bell },
+  { key: 'research', labelKey: 'layout.nav.research', to: '/research', icon: FlaskConical },
   { key: 'usage', labelKey: 'layout.nav.usage', to: '/usage', icon: Gauge },
   { key: 'settings', labelKey: 'layout.nav.settings', to: '/settings', icon: Settings2 },
 ];
@@ -45,6 +47,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
   const completionBadge = useAgentChatStore((state) => state.completionBadge);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showAlphaSiftNav, setShowAlphaSiftNav] = useState(false);
+  const [showResearchNav, setShowResearchNav] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -62,18 +65,33 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
       }
     };
 
+    const refreshResearchStatus = async () => {
+      try {
+        const status = await researchApi.getStatus();
+        if (active) setShowResearchNav(status.enabled);
+      } catch {
+        if (active) setShowResearchNav(false);
+      }
+    };
+
     void refreshAlphaSiftStatus();
+    void refreshResearchStatus();
     window.addEventListener(ALPHASIFT_CONFIG_CHANGED_EVENT, refreshAlphaSiftStatus);
     window.addEventListener(SYSTEM_CONFIG_CHANGED_EVENT, refreshAlphaSiftStatus);
+    window.addEventListener(SYSTEM_CONFIG_CHANGED_EVENT, refreshResearchStatus);
 
     return () => {
       active = false;
       window.removeEventListener(ALPHASIFT_CONFIG_CHANGED_EVENT, refreshAlphaSiftStatus);
       window.removeEventListener(SYSTEM_CONFIG_CHANGED_EVENT, refreshAlphaSiftStatus);
+      window.removeEventListener(SYSTEM_CONFIG_CHANGED_EVENT, refreshResearchStatus);
     };
   }, []);
 
-  const navItems = showAlphaSiftNav ? NAV_ITEMS : NAV_ITEMS.filter((item) => item.key !== 'screening');
+  const navItems = NAV_ITEMS.filter((item) => (
+    (item.key !== 'screening' || showAlphaSiftNav)
+    && (item.key !== 'research' || showResearchNav)
+  ));
   const isRail = variant === 'rail';
   const itemBaseClass = cn(
     'group relative flex h-[var(--nav-item-height)] w-full items-center overflow-hidden rounded-2xl border border-transparent text-sm leading-none text-secondary-text transition-all',

@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "workflow": "earnings_deep_dive",
+  "as_of": "2026-07-15T18:00:00+08:00",
+  "security": {
+    "ts_code": "600519.SH",
+    "code": "600519",
+    "exchange": "SSE",
+    "name": "贵州茅台（测试夹具）",
+    "currency": "CNY"
+  },
+  "executive_summary": "本报告只验证 Phase 0 结构化输出与证据引用链，不构成投资建议。",
+  "thesis": [
+    {
+      "title": "合成数据下的经营稳定性",
+      "statement": "合成年度报告和收入事实支持测试用的稳定性判断。",
+      "stance": "neutral",
+      "confidence": 0.5,
+      "evidence_ids": [
+        "fact:600519.SH:revenue:2025-12-31:v1",
+        "document:cninfo:fixture-annual-2025"
+      ]
+    }
+  ],
+  "financial_analysis": {
+    "summary": "仅展示合成营业收入与净利润，不能映射为真实公司财务表现。",
+    "metrics": [
+      {
+        "metric_code": "revenue",
+        "label": "营业收入（合成）",
+        "value": 1000000,
+        "unit": "CNY",
+        "currency": "CNY",
+        "period_end": "2025-12-31",
+        "evidence_ids": [
+          "fact:600519.SH:revenue:2025-12-31:v1"
+        ]
+      },
+      {
+        "metric_code": "net_profit",
+        "label": "净利润（合成）",
+        "value": 500000,
+        "unit": "CNY",
+        "currency": "CNY",
+        "period_end": "2025-12-31",
+        "evidence_ids": [
+          "fact:600519.SH:net_profit:2025-12-31:v1"
+        ]
+      }
+    ]
+  },
+  "valuation": {
+    "summary": "fixture 数据不足，不生成估值结论。",
+    "method": null,
+    "currency": null,
+    "range_low": null,
+    "range_high": null,
+    "assumptions": [
+      "禁止从合成数据推导真实估值。"
+    ],
+    "evidence_ids": [
+      "price:600519.SH:2026-07-15:raw:v1"
+    ]
+  },
+  "catalysts": [],
+  "risks": [
+    {
+      "title": "fixture 不代表真实数据",
+      "description": "任何基于本测试报告的投资判断都无效。",
+      "severity": "critical",
+      "evidence_ids": [
+        "document:cninfo:fixture-annual-2025"
+      ]
+    }
+  ],
+  "invalidation_conditions": [
+    {
+      "statement": "使用真实数据后必须重新完成全部分析。",
+      "observable": "Evidence Pack 不再带有 synthetic_fixture_only 警告。",
+      "evidence_ids": [
+        "document:cninfo:fixture-annual-2025"
+      ]
+    }
+  ],
+  "data_gaps": [
+    {
+      "field": "all_real_company_data",
+      "reason": "Phase 0 使用完全合成的 fixture。",
+      "impact": "报告不能用于真实研究或投资决策。",
+      "blocking": true
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "fact:600519.SH:revenue:2025-12-31:v1",
+      "claim": "合成营业收入值。",
+      "source_type": "financial_fact"
+    },
+    {
+      "evidence_id": "fact:600519.SH:net_profit:2025-12-31:v1",
+      "claim": "合成净利润值。",
+      "source_type": "financial_fact"
+    },
+    {
+      "evidence_id": "price:600519.SH:2026-07-15:raw:v1",
+      "claim": "合成未复权收盘价口径。",
+      "source_type": "market_price"
+    },
+    {
+      "evidence_id": "document:cninfo:fixture-annual-2025",
+      "claim": "合成年度报告摘录。",
+      "source_type": "source_document"
+    }
+  ],
+  "markdown": "# 600519 PEI Phase 0 Fixture 报告\n\n本报告只用于验证结构化输出、Evidence ID 引用和失败隔离，不构成投资建议。"
+}

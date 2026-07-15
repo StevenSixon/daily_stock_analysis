@@ -87,6 +87,7 @@ class AlertWorker:
         notifier: Optional[Any] = None,
         now_provider: Optional[Callable[[], float]] = None,
         fingerprint_ttl_seconds: int = ALERT_WORKER_FINGERPRINT_TTL_SECONDS,
+        research_trigger_service: Optional[Any] = None,
     ) -> None:
         self.config_provider = config_provider or self._default_config_provider
         self.service = service or AlertService()
@@ -97,6 +98,8 @@ class AlertWorker:
         self._trigger_fingerprints: Dict[str, float] = {}
         self._trigger_fingerprint_ttls: Dict[str, int] = {}
         self._analysis_visibility_cache: Dict[str, Optional[Dict[str, Any]]] = {}
+        self._research_trigger = research_trigger_service
+        self._research_trigger_resolved = research_trigger_service is not None
 
     @staticmethod
     def _default_config_provider():
@@ -121,6 +124,7 @@ class AlertWorker:
             "failed": 0,
             "notification_attempts": 0,
             "cooldown_suppressed": 0,
+            "research_jobs": 0,
         }
 
         try:
@@ -175,6 +179,12 @@ class AlertWorker:
 
             if record_status == "triggered":
                 stats["triggered"] += 1
+                if trigger_write.created and self._trigger_research_safely(
+                    runtime_rule,
+                    result,
+                    trigger_write.trigger_id,
+                ):
+                    stats["research_jobs"] += 1
                 if runtime_rule.source == "db":
                     cooldown_decision = self._check_db_cooldown(runtime_rule, trigger_id)
                     if cooldown_decision.suppressed:
@@ -199,6 +209,43 @@ class AlertWorker:
                         stats["notified"] += 1
 
         return stats
+
+    def _trigger_research_safely(
+        self,
+        runtime_rule: RuntimeAlertRule,
+        result: Dict[str, Any],
+        trigger_id: Optional[int],
+    ) -> bool:
+        if trigger_id is None:
+            return False
+        if not self._research_trigger_resolved:
+            self._research_trigger_resolved = True
+            try:
+                from src.services.research_service import get_research_service, research_enabled
+                from src.services.research_trigger_service import ResearchTriggerService
+
+                if research_enabled():
+                    self._research_trigger = ResearchTriggerService(get_research_service())
+            except Exception as exc:
+                logger.warning("[AlertWorker] Research trigger initialization failed: %s", type(exc).__name__)
+                self._research_trigger = None
+        if self._research_trigger is None:
+            return False
+        try:
+            outcome = self._research_trigger.on_alert(
+                security_code=self._effective_target(runtime_rule),
+                trigger_id=trigger_id,
+                result=result,
+                as_of=self._now_datetime(),
+            )
+            return isinstance(outcome, dict) and outcome.get("status") == "created"
+        except Exception as exc:
+            logger.warning(
+                "[AlertWorker] Research candidate creation failed for %s: %s",
+                self._display_target(runtime_rule),
+                type(exc).__name__,
+            )
+            return False
 
     def _load_runtime_rules(self, config: Any) -> List[RuntimeAlertRule]:
         runtime_rules: List[RuntimeAlertRule] = []

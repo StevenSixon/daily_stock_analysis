@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://daily-stock-analysis.local/schemas/pei-report-v1.schema.json",
+  "title": "DSA PEI Research Report v1",
+  "description": "Structured output contract for validated Public Equity Investing research reports.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "workflow": {
+      "type": "string",
+      "enum": [
+        "initiating_coverage",
+        "earnings_deep_dive",
+        "earnings_preview",
+        "thesis_tracker",
+        "catalyst_calendar",
+        "dcf",
+        "comps",
+        "long_short_pitch",
+        "portfolio_risk_management"
+      ]
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "security": {
+      "$ref": "#/$defs/security"
+    },
+    "executive_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "thesis": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/thesis_item"
+      }
+    },
+    "financial_analysis": {
+      "$ref": "#/$defs/financial_analysis"
+    },
+    "valuation": {
+      "$ref": "#/$defs/valuation"
+    },
+    "catalysts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/catalyst"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/risk"
+      }
+    },
+    "invalidation_conditions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/invalidation_condition"
+      }
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/data_gap"
+      }
+    },
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/citation"
+      }
+    },
+    "markdown": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "workflow",
+    "as_of",
+    "security",
+    "executive_summary",
+    "thesis",
+    "financial_analysis",
+    "valuation",
+    "catalysts",
+    "risks",
+    "invalidation_conditions",
+    "data_gaps",
+    "citations",
+    "markdown"
+  ],
+  "$defs": {
+    "evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ts_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "exchange": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": ["ts_code", "code", "exchange", "name", "currency"]
+    },
+    "thesis_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stance": {
+          "type": "string",
+          "enum": ["positive", "negative", "mixed", "neutral"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "required": ["title", "statement", "stance", "confidence", "evidence_ids"]
+    },
+    "financial_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metric_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": ["number", "string"]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "currency": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Z]{3}$"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "required": [
+        "metric_code",
+        "label",
+        "value",
+        "unit",
+        "currency",
+        "period_end",
+        "evidence_ids"
+      ]
+    },
+    "financial_analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/financial_metric"
+          }
+        }
+      },
+      "required": ["summary", "metrics"]
+    },
+    "valuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "type": ["string", "null"]
+        },
+        "currency": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Z]{3}$"
+        },
+        "range_low": {
+          "type": ["number", "null"]
+        },
+        "range_high": {
+          "type": ["number", "null"]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        }
+      },
+      "required": [
+        "summary",
+        "method",
+        "currency",
+        "range_low",
+        "range_high",
+        "assumptions",
+        "evidence_ids"
+      ]
+    },
+    "catalyst": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "probability": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "expected_date",
+        "probability",
+        "impact",
+        "evidence_ids"
+      ]
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "required": ["title", "description", "severity", "evidence_ids"]
+    },
+    "invalidation_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidence_ids"
+        }
+      },
+      "required": ["statement", "observable", "evidence_ids"]
+    },
+    "data_gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocking": {
+          "type": "boolean"
+        }
+      },
+      "required": ["field", "reason", "impact", "blocking"]
+    },
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "financial_fact",
+            "source_document",
+            "market_price",
+            "corporate_action",
+            "news_event",
+            "previous_research"
+          ]
+        }
+      },
+      "required": ["evidence_id", "claim", "source_type"]
+    }
+  }
+}

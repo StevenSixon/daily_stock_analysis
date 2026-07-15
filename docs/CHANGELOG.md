@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - [改进] Web 历史报告详情不再内嵌展示 AI 建议卡片，结构化决策信号集中在 AI 建议页查询，并保留按来源报告 ID 筛选或 URL 参数精确定位入口。
 - [修复] 飞书 App Bot 支持 union_id/user_id/email 收件人类型（此前仅 chat_id/open_id，配置其它类型会被静默回退为 chat_id 导致 invalid receive_id 发送失败）。
 - [文档] 新增《本地定时运行（macOS launchd）》配方文档，含启动器/LaunchAgent 示例与 TCC/Keychain 权限坑，并登记到 docs/INDEX.md。
+- [文档] 新增 DSA + Public Equity Investing 深度研究系统设计，记录研究数据域、point-in-time 语义、MCP/Worker 契约、ADR、风险、回滚和分阶段实施方案。
+- [新功能] 新增 DSA + PEI Phase 0 合成纵切，提供只读 fixture MCP、版本化报告 Schema、受控 Codex Runner、Evidence ID 二次校验、失败产物和离线契约测试。
+- [修复] PEI Runner 为 Codex Structured Outputs 生成兼容 Schema 子集、校验已物化插件版本，并隔离个人技能目录，修复真实调用被不支持的 Schema 关键字或技能上下文预算阻断的问题。
+- [改进] PEI Phase 0 专用 Codex 配置默认禁用 Web Search 与第三方 App/Connector，仅保留 fixture MCP allowlist，并在运行后审计工具事件、拒绝发布越界调用结果。
+- [新功能] 完成 PEI Research Center 分阶段实现：独立 Research DB、A 股 PIT 数据与官方公告、Evidence Pack、版本化报告/API、受限 MCP、持久化 Codex Worker、人工审核和 Web 页面。
+- [新功能] 新增可选公告/技术告警研究触发、催化剂与论点落库及审核通过后的通知复用，全部保持独立 opt-in、冷却和幂等边界。
+- [改进] PEI Research 增加定时公告增量扫描、归档失败重试与重复下载抑制，并加入单次/月度 Token 预算门禁和月度用量状态。
+- [修复] PEI 巨潮公告 Provider 先从官方股票清单解析 orgId，修复仅传证券代码时接口返回成功但公告列表为空的问题。
+- [测试] 新增 Research 数据口径、Provider、任务/租约/报告生命周期、Worker 认证、MCP 传输与安全边界回归测试。
+- [文档] 新增 PEI Research Center 配置、启动、垂直切片、状态恢复、安全边界、验证和回滚指南及生产 Worker Codex 配置模板。
 
 ## [3.23.0] - 2026-06-20
 

@@ -330,6 +330,64 @@ class MainScheduleModeTestCase(unittest.TestCase):
         self.assertEqual(len(scheduled_call["background_tasks"]), 1)
         self.assertEqual(scheduled_call["background_tasks"][0]["name"], "agent_event_monitor")
 
+    def test_schedule_mode_registers_opt_in_research_disclosure_scanner(self) -> None:
+        args = self._make_args(schedule=True)
+        startup_config = self._make_config(schedule_enabled=False)
+        runtime_config = self._make_config(stock_list=["600519", "000001"])
+        scanner = MagicMock()
+        scanner.run_once.return_value = {
+            "created": 1,
+            "research_jobs": 1,
+            "failed": 0,
+        }
+        scheduled_call = {}
+
+        def fake_run_with_schedule(
+            task,
+            schedule_time,
+            run_immediately,
+            background_tasks=None,
+            schedule_time_provider=None,
+        ):
+            scheduled_call["background_tasks"] = background_tasks or []
+
+        with patch.dict(
+            os.environ,
+            {
+                "RESEARCH_ENABLED": "true",
+                "RESEARCH_AUTO_TRIGGER_DISCLOSURES": "true",
+                "RESEARCH_DISCLOSURE_SCAN_INTERVAL_MINUTES": "90",
+                "RESEARCH_DISCLOSURE_SCAN_LOOKBACK_DAYS": "30",
+            },
+        ):
+            with (
+                patch("main.parse_arguments", return_value=args),
+                patch("main.get_config", return_value=startup_config),
+                patch("main._reload_runtime_config", return_value=runtime_config),
+                patch("main._build_schedule_time_provider", return_value=lambda: "18:00"),
+                patch("main.setup_logging"),
+                patch("main.run_full_analysis"),
+                patch("src.services.research_service.get_research_service", return_value=object()),
+                patch(
+                    "src.services.research_trigger_service.ResearchDisclosureScanner",
+                    return_value=scanner,
+                ),
+                patch("src.scheduler.run_with_schedule", side_effect=fake_run_with_schedule),
+            ):
+                exit_code = main.main()
+                scheduled_call["background_tasks"][0]["task"]()
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(len(scheduled_call["background_tasks"]), 1)
+        background_task = scheduled_call["background_tasks"][0]
+        self.assertEqual(background_task["name"], "research_disclosure_scanner")
+        self.assertEqual(background_task["interval_seconds"], 90 * 60)
+        self.assertTrue(background_task["run_immediately"])
+        scanner.run_once.assert_called_once_with(
+            ["600519", "000001"],
+            lookback_days=30,
+        )
+
     def test_check_notify_returns_before_other_modes(self) -> None:
         args = self._make_args(check_notify=True, serve=True, schedule=True, market_review=True)
         config = self._make_config(webui_enabled=False)

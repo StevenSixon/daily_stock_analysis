@@ -1,0 +1,33 @@
+# Copy this file to the dedicated RESEARCH_CODEX_HOME/config.toml.
+# Replace every <ABSOLUTE_PROJECT_PATH> placeholder before starting the Worker.
+# RESEARCH_WORKER_API_URL and RESEARCH_WORKER_TOKEN are inherited from the
+# explicitly allowlisted RESEARCH_CODEX_FORWARD_ENV; never put their values here.
+
+approval_policy = "never"
+sandbox_mode = "read-only"
+cli_auth_credentials_store = "file"
+web_search = "disabled"
+
+[apps._default]
+enabled = false
+
+[mcp_servers.dsa_research]
+command = "<ABSOLUTE_PROJECT_PATH>/.venv/bin/python"
+args = ["-m", "src.integrations.codex.research_mcp_server"]
+cwd = "<ABSOLUTE_PROJECT_PATH>"
+required = true
+enabled = true
+enabled_tools = [
+  "resolve_security",
+  "get_evidence_pack_manifest",
+  "get_company_profile",
+  "get_financial_statements",
+  "get_market_history",
+  "get_corporate_actions",
+  "search_official_filings",
+  "get_filing_excerpt",
+  "get_previous_research",
+]
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 15
+tool_timeout_sec = 45

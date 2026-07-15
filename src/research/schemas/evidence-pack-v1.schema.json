@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://daily-stock-analysis.local/schemas/evidence-pack-v1.schema.json",
+  "title": "DSA PEI Evidence Pack v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_id",
+    "security",
+    "as_of",
+    "data_cutoff",
+    "workflow",
+    "company_profile",
+    "financials",
+    "market_data",
+    "corporate_actions",
+    "filings",
+    "news_events",
+    "previous_research",
+    "evidence_manifest",
+    "quality",
+    "manifest_hash"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "pack_id": {"type": "string", "pattern": "^ep_[0-9a-f]{32}$"},
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["security_id", "ts_code", "symbol", "exchange", "market", "name", "currency"],
+      "properties": {
+        "security_id": {"type": "string"},
+        "ts_code": {"type": "string"},
+        "symbol": {"type": "string"},
+        "exchange": {"type": "string"},
+        "market": {"type": "string"},
+        "name": {"type": "string"},
+        "industry": {"type": ["string", "null"]},
+        "currency": {"type": "string"}
+      }
+    },
+    "as_of": {"type": "string", "format": "date-time"},
+    "data_cutoff": {"type": "string", "format": "date-time"},
+    "workflow": {"type": "string", "minLength": 1},
+    "company_profile": {"type": "object"},
+    "financials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["facts"],
+      "properties": {"facts": {"type": "array", "items": {"type": "object"}}}
+    },
+    "market_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["price_basis", "prices"],
+      "properties": {
+        "price_basis": {"enum": ["raw", "forward", "backward"]},
+        "prices": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "corporate_actions": {"type": "array", "items": {"type": "object"}},
+    "filings": {"type": "array", "items": {"type": "object"}},
+    "news_events": {"type": "array", "items": {"type": "object"}},
+    "previous_research": {"type": "array", "items": {"type": "object"}},
+    "evidence_manifest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "evidence_type", "source"],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "evidence_type": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "coverage", "warnings", "blocking_gaps"],
+      "properties": {
+        "status": {"enum": ["ready", "degraded", "blocked_data"]},
+        "coverage": {"type": "object"},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "blocking_gaps": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "manifest_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

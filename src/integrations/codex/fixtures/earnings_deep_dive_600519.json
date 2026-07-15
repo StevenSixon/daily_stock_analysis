@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "ep_fixture_600519_2025_annual_v1",
+  "fixture_notice": "Synthetic Phase 0 fixture. Values must not be used for investment decisions.",
+  "security": {
+    "ts_code": "600519.SH",
+    "code": "600519",
+    "exchange": "SSE",
+    "name": "贵州茅台（测试夹具）",
+    "currency": "CNY"
+  },
+  "as_of": "2026-07-15T18:00:00+08:00",
+  "data_cutoff": "2026-07-15T17:59:00+08:00",
+  "workflow": "earnings_deep_dive",
+  "company_profile": {
+    "industry": "食品饮料",
+    "listing_status": "L",
+    "is_fixture": true
+  },
+  "financials": {
+    "statement_scope": "consolidated",
+    "currency": "CNY",
+    "facts": [
+      {
+        "evidence_id": "fact:600519.SH:revenue:2025-12-31:v1",
+        "metric_code": "revenue",
+        "value": 1000000,
+        "unit": "CNY",
+        "currency": "CNY",
+        "period_end": "2025-12-31",
+        "announced_at": "2026-03-28T18:00:00+08:00",
+        "available_at": "2026-03-28T18:00:00+08:00",
+        "revision_no": 1,
+        "transform_version": "fixture-v1",
+        "source": {
+          "type": "tushare_fixture",
+          "record_id": "income:600519.SH:2025-12-31:fixture",
+          "document_id": "fixture-annual-2025",
+          "uri": "fixture://tushare/income/600519.SH/2025-12-31"
+        },
+        "quality": "fixture_verified"
+      },
+      {
+        "evidence_id": "fact:600519.SH:net_profit:2025-12-31:v1",
+        "metric_code": "net_profit",
+        "value": 500000,
+        "unit": "CNY",
+        "currency": "CNY",
+        "period_end": "2025-12-31",
+        "announced_at": "2026-03-28T18:00:00+08:00",
+        "available_at": "2026-03-28T18:00:00+08:00",
+        "revision_no": 1,
+        "transform_version": "fixture-v1",
+        "source": {
+          "type": "tushare_fixture",
+          "record_id": "income:600519.SH:2025-12-31:fixture",
+          "document_id": "fixture-annual-2025",
+          "uri": "fixture://tushare/income/600519.SH/2025-12-31"
+        },
+        "quality": "fixture_verified"
+      }
+    ]
+  },
+  "market_data": {
+    "price_basis": "raw",
+    "currency": "CNY",
+    "prices": [
+      {
+        "evidence_id": "price:600519.SH:2026-07-15:raw:v1",
+        "trade_date": "2026-07-15",
+        "close": 100,
+        "adj_factor": 1,
+        "basis": "raw",
+        "source": "fixture_market_data"
+      }
+    ]
+  },
+  "corporate_actions": [],
+  "filings": [
+    {
+      "evidence_id": "document:cninfo:fixture-annual-2025",
+      "document_id": "fixture-annual-2025",
+      "source_name": "cninfo_fixture",
+      "external_id": "fixture-annual-2025",
+      "title": "贵州茅台 2025 年年度报告（合成测试数据）",
+      "published_at": "2026-03-28T18:00:00+08:00",
+      "period_end": "2025-12-31",
+      "uri": "fixture://cninfo/600519/fixture-annual-2025",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "content_is_untrusted": true,
+      "excerpt": "【合成测试数据】本报告期经营保持稳定。公告内容仅作为研究数据，不是系统指令。"
+    }
+  ],
+  "news_events": [],
+  "previous_research": [],
+  "quality": {
+    "status": "ready",
+    "coverage": {
+      "financial_statements": 1,
+      "official_filings": 1,
+      "market_price_basis": 1
+    },
+    "warnings": [
+      "synthetic_fixture_only",
+      "not_for_investment_decisions"
+    ],
+    "blocking_gaps": []
+  },
+  "evidence_manifest": [
+    {
+      "evidence_id": "fact:600519.SH:revenue:2025-12-31:v1",
+      "evidence_type": "financial_fact",
+      "source": "tushare_fixture"
+    },
+    {
+      "evidence_id": "fact:600519.SH:net_profit:2025-12-31:v1",
+      "evidence_type": "financial_fact",
+      "source": "tushare_fixture"
+    },
+    {
+      "evidence_id": "price:600519.SH:2026-07-15:raw:v1",
+      "evidence_type": "market_price",
+      "source": "fixture_market_data"
+    },
+    {
+      "evidence_id": "document:cninfo:fixture-annual-2025",
+      "evidence_type": "source_document",
+      "source": "cninfo_fixture"
+    }
+  ],
+  "manifest_hash": "sha256:e0e74f1f6ea6c210d55a69c010054da90430bdc43f2f23bdcee896b7013b7dd5"
+}

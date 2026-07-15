@@ -1,0 +1,27 @@
+# Copy this file to the dedicated RESEARCH_CODEX_HOME/config.toml.
+# Replace both placeholders with absolute local paths before running preflight.
+
+approval_policy = "never"
+sandbox_mode = "read-only"
+cli_auth_credentials_store = "file"
+web_search = "disabled"
+
+[apps._default]
+enabled = false
+
+[mcp_servers.dsa_research_fixture]
+command = "<ABSOLUTE_PROJECT_PATH>/.venv/bin/python"
+args = ["-m", "src.integrations.codex.fixture_mcp_server"]
+cwd = "<ABSOLUTE_PROJECT_PATH>"
+required = true
+enabled = true
+enabled_tools = [
+  "resolve_security",
+  "get_evidence_pack_manifest",
+  "get_financial_statements",
+  "get_market_history",
+  "get_filing_excerpt",
+]
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 10
+tool_timeout_sec = 30

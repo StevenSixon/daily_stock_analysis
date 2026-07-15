@@ -44,6 +44,8 @@
 | [实时告警中心](alerts.md) | EventMonitor 基线、Web 规则管理、通知结果、冷却状态和 Phase 边界 |
 | [DecisionSignal 决策信号专题](decision-signals.md) | AI 建议池字段语义、API、Web 展示、告警/通知/组合风险联动、后验评估、脱敏、迁移与回滚 |
 | [资讯 / 情报源](intelligence-sources.md) | RSS/Atom 合规资讯源配置、测试、拉取、去重、存储、查询与安全边界 |
+| [DSA + PEI Phase 0 可行性验证](pei-research-phase0.md) | 合成 Evidence Pack、只读 MCP、受控 Codex Runner、输出校验、产物和回滚说明 |
+| [PEI Research Center 使用与运维](pei-research.md) | A 股研究数据、Evidence Pack、API/MCP/Worker、Web 审核、事件触发、验证和回滚 |
 | [分析上下文包契约、运行态消费与可见性](analysis-context-pack.md) | AnalysisContextPack 首版范围、字段质量状态、P1/P2 内部契约、P3 Prompt 摘要消费、P4 历史/API/Web 低敏可见性、P5 数据质量评分、P6 迁移回滚与源码锚点；完整指南补充 #1386 阶段感知分析、迁移与回滚入口 |
 | [图片识别 Prompt](image-extract-prompt.md) | 图片识别股票信息的 Prompt 与使用边界 |
 | [OpenClaw Skill 集成](openclaw-skill-integration.md) | OpenClaw / Skill 外部集成说明 |
@@ -63,6 +65,9 @@
 | 文档 | 内容 |
 | --- | --- |
 | [API 规格](architecture/api_spec.json) | FastAPI OpenAPI 规格产物 |
+| [DSA + PEI 深度研究系统设计](architecture/dsa-pei-research-system-design.md) | 以 DSA 为产品与监控外壳、以 Public Equity Investing 为深度研究引擎的需求、数据、MCP、Worker、ADR 与分阶段实施设计 |
+| [PEI Phase 0 Codex 配置模板](examples/pei-phase0-codex-config.toml) | 专用 Codex Home 的只读 fixture MCP allowlist 配置模板 |
+| [PEI Research Worker Codex 配置模板](examples/pei-research-codex-config.toml) | 生产 Worker 专用 Codex Home 的九项只读 MCP allowlist 配置 |
 | [贡献指南](CONTRIBUTING.md) | Issue、PR、测试、文档同步和协作要求 |
 
 ## 多语言

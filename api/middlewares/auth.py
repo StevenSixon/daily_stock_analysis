@@ -31,7 +31,9 @@ EXEMPT_PATHS = frozenset({
 def _path_exempt(path: str) -> bool:
     """Check if path is exempt from auth."""
     normalized = path.rstrip("/") or "/"
-    return normalized in EXEMPT_PATHS
+    # Worker endpoints always apply their own scoped Bearer-token check. They
+    # must not also depend on a browser session cookie.
+    return normalized in EXEMPT_PATHS or normalized.startswith("/api/v1/research/worker")
 
 
 class AuthMiddleware(BaseHTTPMiddleware):

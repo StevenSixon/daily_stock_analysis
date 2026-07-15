@@ -1010,6 +1010,14 @@ def _is_truthy_env(var_name: str, default: str = "true") -> bool:
     return value not in {"0", "false", "no", "off"}
 
 
+def _bounded_int_env(var_name: str, default: int, minimum: int, maximum: int) -> int:
+    try:
+        value = int((os.getenv(var_name) or str(default)).strip())
+    except ValueError:
+        value = default
+    return max(minimum, min(value, maximum))
+
+
 def start_bot_stream_clients(config: Config) -> None:
     """Start bot stream clients when enabled in config."""
     # 启动钉钉 Stream 客户端
@@ -1296,6 +1304,55 @@ def main() -> int:
                     "run_immediately": True,
                     "name": "agent_event_monitor",
                 })
+
+            if (
+                _is_truthy_env("RESEARCH_ENABLED", "false")
+                and _is_truthy_env("RESEARCH_AUTO_TRIGGER_DISCLOSURES", "false")
+            ):
+                try:
+                    from src.services.research_service import get_research_service
+                    from src.services.research_trigger_service import ResearchDisclosureScanner
+
+                    disclosure_scanner = ResearchDisclosureScanner(get_research_service())
+                except Exception as exc:
+                    logger.warning(
+                        "[ResearchDisclosureScanner] 初始化失败，跳过公告后台扫描: %s",
+                        type(exc).__name__,
+                    )
+                else:
+                    disclosure_interval_minutes = _bounded_int_env(
+                        "RESEARCH_DISCLOSURE_SCAN_INTERVAL_MINUTES",
+                        360,
+                        15,
+                        24 * 60,
+                    )
+                    disclosure_lookback_days = _bounded_int_env(
+                        "RESEARCH_DISCLOSURE_SCAN_LOOKBACK_DAYS",
+                        45,
+                        1,
+                        366,
+                    )
+
+                    def research_disclosure_task():
+                        runtime_config = _reload_runtime_config()
+                        stats = disclosure_scanner.run_once(
+                            getattr(runtime_config, "stock_list", []),
+                            lookback_days=disclosure_lookback_days,
+                        )
+                        if stats.get("created") or stats.get("failed"):
+                            logger.info(
+                                "[ResearchDisclosureScanner] 新增公告 %d，创建任务 %d，失败 %d",
+                                stats.get("created", 0),
+                                stats.get("research_jobs", 0),
+                                stats.get("failed", 0),
+                            )
+
+                    background_tasks.append({
+                        "task": research_disclosure_task,
+                        "interval_seconds": disclosure_interval_minutes * 60,
+                        "run_immediately": True,
+                        "name": "research_disclosure_scanner",
+                    })
 
             run_with_schedule(
                 task=scheduled_task,

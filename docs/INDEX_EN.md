@@ -44,6 +44,8 @@ This is the entry point for project documentation. The README covers the project
 | [Bot Platform Docs](bot/) <sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub> (Chinese-only) | Feishu, DingTalk, Discord, and related Bot configuration screenshots and notes |
 | [Real-Time Alert Center](alerts.md) <sub><sub>![P4 Badge](https://img.shields.io/badge/P4-yellow?style=flat)</sub></sub> (Chinese-only) | EventMonitor baseline, Web rule management, notification attempts, cooldown state, and phase boundaries |
 | [DecisionSignal Topic](decision-signals.md) <sub><sub>![P7 Badge](https://img.shields.io/badge/P7-orange?style=flat)</sub></sub> (Chinese-only) | AI signal fields, API, Web display, alert/notification/portfolio-risk linkage, outcome evaluation, redaction, migration, and rollback |
+| [DSA + PEI Phase 0 Feasibility Guide](pei-research-phase0.md) (Chinese-only) | Synthetic Evidence Pack, read-only MCP, controlled Codex runner, output validation, artifacts, and rollback |
+| [PEI Research Center Operations](pei-research.md) (Chinese-only) | A-share research data, Evidence Packs, API/MCP/Worker, Web review, event triggers, validation, and rollback |
 | [Analysis Context Pack Contract, Runtime Consumption, And Visibility](analysis-context-pack.md) <sub><sub>![P6 Badge](https://img.shields.io/badge/P6-orange?style=flat)</sub></sub> (Chinese-only) | AnalysisContextPack first-scope boundaries, field quality states, P1/P2 internal contracts, P3 prompt-summary consumption, P4 history/API/Web low-sensitivity visibility, P5 data-quality scoring, and P6 migration/rollback notes, plus source anchors; the full guide adds #1386 market-phase analysis, migration, and rollback entry points |
 | [Image Extraction Prompt](image-extract-prompt.md) <sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub> (Chinese-only) | Prompt and boundaries for extracting stock information from images |
 | [OpenClaw Skill Integration](openclaw-skill-integration.md) <sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub> (Chinese-only) | OpenClaw / Skill external integration notes |
@@ -62,6 +64,9 @@ This is the entry point for project documentation. The README covers the project
 | Document | Contents |
 | --- | --- |
 | [API Spec](architecture/api_spec.json) | FastAPI OpenAPI artifact |
+| [DSA + PEI Research System Design](architecture/dsa-pei-research-system-design.md) (Chinese-only) | Requirements, data domain, MCP and Worker contracts, ADRs, risks, rollback, and phased delivery design |
+| [PEI Phase 0 Codex Config Template](examples/pei-phase0-codex-config.toml) | Dedicated Codex Home configuration with a read-only fixture MCP allowlist |
+| [PEI Research Worker Codex Config Template](examples/pei-research-codex-config.toml) | Production Worker Codex Home with nine explicitly allowlisted read-only MCP tools |
 | [Contributing Guide (EN)](CONTRIBUTING_EN.md) | Issues, pull requests, tests, documentation sync, and collaboration expectations |
 
 ## Languages
